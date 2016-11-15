@@ -1,0 +1,39 @@
+
+.control {
+  display: block;
+  margin: 1rem 0;
+  padding: 0.5rem;
+
+  &__label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: bold;
+  }
+
+  &__input {
+    border: 1px solid #ccc;
+    outline: none;
+
+    &--active {
+      border: 1px solid rgba(blue, .5);
+    }
+
+    &--dirty {
+      background-color: #fffacf;
+    }
+
+  }
+
+  &__error {
+    display: block;
+    padding: .5em;
+    font-size: 0.8rem;
+    color: white;
+    background-color: red;
+  }
+
+}
+
+input {
+  font-size: 0.8rem;
+}

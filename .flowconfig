@@ -1,0 +1,10 @@
+[ignore]
+<PROJECT_ROOT>/node_modules/**
+<PROJECT_ROOT>/example/node_modules/**
+
+[include]
+
+[libs]
+
+[options]
+esproposal.class_static_fields=enable
