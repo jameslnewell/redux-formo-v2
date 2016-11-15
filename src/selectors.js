@@ -1,51 +1,51 @@
 
-//TODO: move to Form/selectors
-export const getForm = form => state => {
+export const getForm = formName => state => {
 
   if (!state.form) {
     return {};
   }
 
-  if (!state.form[form]) {
+  if (!state.form[formName]) {
     return {};
   }
 
-  return state.form[form];
+  return state.form[formName];
 };
 
-//TODO: move to Form/selectors
-const getFormFields = form => state => {
-  const formState = getForm(form)(state);
+export const getMeta = (formName, fieldName) => state => {
+  const form = getForm(formName)(state);
 
-  if (!formState.fields) {
+  if (!form.metaByField) {
     return {};
   }
 
-  return formState.fields;
-};
-
-//TODO: move to Field/selectors
-export const getFormField = (form, field) => state => {
-  const formFields = getFormFields(form)(state);
-
-  if (!formFields[field]) {
+  if (!form.metaByField[fieldName]) {
     return {};
   }
 
-  return formFields[field];
+  return form.metaByField[fieldName];
 };
 
-//TODO: move to Field/selectors
-export const getFieldValue = (form, field) => state => {
-  const formField = getFormField(form, field)(state);
-  return formField.value;
+export const getValue = (formName, fieldName) => state => {
+  const form = getForm(formName)(state);
+
+  if (!form.valuesByField) {
+    return {};
+  }
+
+  if (typeof form.valuesByField[fieldName] === 'undefined') {
+    return '';
+  }
+
+  return form.valuesByField[fieldName];
 };
 
-//TODO: move to Field/selectors
-export const getFieldValues = (form) => state => {
-  const formFields = getFormFields(form)(state);
+export const getValues = (formName) => state => {
+  const form = getForm(formName)(state);
 
-  const values = {};
-  Object.keys(formFields).forEach(field => values[field] = formFields[field].value);
-  return values;
+  if (!form.valuesByField) {
+    return {};
+  }
+
+  return form.valuesByField;
 };

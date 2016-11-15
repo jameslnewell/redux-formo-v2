@@ -9,8 +9,8 @@ import {
 } from './constants';
 
 import {
-  getFieldValue,
-  getFieldValues
+  getValue,
+  getValues
 } from './selectors';
 
 export const setActive = (form, field, active) => ({
@@ -69,8 +69,8 @@ const errorValidating = (form, field, error) => ({
 export const validate = (form, field, fn) => (dispatch, getState) => {
 
   const state = getState();
-  const value = getFieldValue(form, field)(state);
-  const values = getFieldValues(form)(state);
+  const value = getValue(form, field)(state);
+  const values = getValues(form)(state);
 
   //enter the validating state when promise doesn't resolve immediately
   const timeout = setTimeout(

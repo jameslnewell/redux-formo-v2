@@ -22,6 +22,24 @@ export class Form extends React.Component {
     };
   }
 
+  componentWillMount() {
+    this.initialise();
+  }
+
+  componentWillReceiveProps(nextProps) {
+    console.log('shallow equal test', this.props.values === nextProps.values);
+  }
+
+  initialise() {
+    return Promise.all(
+      Object.keys(this.props.validate)
+        .map(fieldName => this.props.actions.setValue(fieldName, this.props.initialValues[fieldName]))
+    )
+      .then(() => console.log('inited', this.props.validate, this.props.initialValues))
+      .catch(err => console.log(err))
+    ;
+  }
+
   validate() {
     return Promise.all(
       Object.keys(this.props.validate)
@@ -37,7 +55,7 @@ export class Form extends React.Component {
       .then(valid => {
 
         if (valid) {
-          this.props.onSubmit(this.props.values); //TODO:
+          this.props.onSubmit(this.props.values);
         }
 
       })
@@ -73,13 +91,15 @@ Form.childContextTypes = {
 
 Form.propTypes = {
   name: React.PropTypes.string.isRequired,
-  validate: React.PropTypes.object.isRequired,
+  validate: React.PropTypes.object,
+  initialValues: React.PropTypes.object,
   onSubmit: React.PropTypes.func,
   children: React.PropTypes.oneOfType([React.PropTypes.node, React.PropTypes.func])
 };
 
 Form.defaultProps = {
   validate: {},
+  initialValues: {},
   onSubmit: () => {/* do nothing */},
   children: null
 };

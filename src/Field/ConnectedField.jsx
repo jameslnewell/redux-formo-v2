@@ -2,6 +2,7 @@ import React from 'react';
 import {connect} from 'react-redux';
 import mapStateToProps from './mapStateToProps';
 import mapDispatchToProps from './mapDispatchToProps';
+import diff from 'shallow-diff';
 
 /*
 
@@ -20,10 +21,16 @@ export class ConnectedField extends React.Component {
     this.handleBlur = this.handleBlur.bind(this);
     this.handleChange = this.handleChange.bind(this);
 
-    //initialise the field value
-    this.props.actions.setValue(props.initialValue);
-
   }
+
+  // componentWillReceiveProps(nextProps) {
+  //   console.log('ConnectedField shallow equal test', diff(this.props, nextProps));
+  // }
+  //
+  // shouldComponentUpdate(nextProps) {
+  //   console.log(Object.keys(nextProps).length, diff(this.props, nextProps).unchanged.length)
+  //   return Object.keys(nextProps).length !== diff(this.props, nextProps).unchanged.length;
+  // }
 
   /**
    * Validate the input
@@ -84,7 +91,6 @@ export class ConnectedField extends React.Component {
       formName,
       fieldName,
       value,
-      initialValue,
       validate,
       validateOn,
 
@@ -149,8 +155,6 @@ ConnectedField.propTypes = {
   formName: React.PropTypes.string.isRequired,
   fieldName: React.PropTypes.string.isRequired,
 
-  initialValue: React.PropTypes.any,
-
   validate: React.PropTypes.func,
   validateOn: React.PropTypes.oneOf(['change', 'blur']),
 
@@ -162,7 +166,6 @@ ConnectedField.propTypes = {
 };
 
 ConnectedField.defaultProps = {
-  initialValue: '',
   validate: () => true,
   validateOn: 'blur',
   children: 'input'

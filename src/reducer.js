@@ -22,7 +22,6 @@ export const setStateToPayloadReducer = (actionType, initialState) => (state = i
 
 export const active = setStateToPayloadReducer(FIELD_SET_ACTOVE, false);
 export const dirty = setStateToPayloadReducer(FIELD_SET_DIRTY, false);
-export const value = setStateToPayloadReducer(FIELD_SET_VALUE, '');
 
 export const error = (state = null, action = {}) => {
   const {type, payload} = action;
@@ -76,28 +75,47 @@ export const validated = (state = false, action = {}) => {
 
 };
 
-export const field = combineReducers({
+export const meta = combineReducers({
   active,
   dirty,
-  value,
   error,
   validating,
   validated
 });
 
-export const fields = (state = {}, action = {}) => {
+export const metaByField = (state = {}, action = {}) => {
   if (action.meta && action.meta.field) {
     return {
       ...state,
-      [action.meta.field]: field(state[action.meta.field], action)
+      [action.meta.field]: meta(state[action.meta.field], action)
     };
   } else {
     return state;
   }
 };
 
+export const valuesByField = (state = {}, action = {}) => {
+  if (action.meta && action.meta.field) {
+    switch (action.type) {
+
+      case FIELD_SET_VALUE:
+        return {
+          ...state,
+          [action.meta.field]: action.payload
+        };
+
+      default:
+        return state;
+
+    }
+  } else {
+    return state;
+  }
+};
+
 export const form = combineReducers({
-  fields
+  metaByField,
+  valuesByField
 });
 
 export default (state = {}, action = {}) => {

@@ -1,8 +1,10 @@
-import {getForm} from '../selectors';
+import {getValues} from '../selectors';
 
-export default (state, ownProps) => {
-  const form = getForm(ownProps.name)(state);
+export default (state, props) => {
+  const formName = props.name;
+
   return {
-    name: ownProps.name
+    values: getValues(formName)(state)
   };
+
 };

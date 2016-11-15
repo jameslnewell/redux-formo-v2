@@ -3,20 +3,29 @@ import {Form, Field} from '../../../..';
 import Control from '../../shared/Control';
 import validate from './validate';
 
+const initialValues = {
+  message: 'I love your product so much!'
+};
+
 class SimpleExample extends React.Component {
 
+  constructor(...args) {
+    super(...args);
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+
   handleSubmit(values) {
-    alert(`submitted with: ${values}`)
+    console.log('Submitted:', values);
   }
 
   render() {
     return (
-      <Form name="contact" validate={validate} onSubmit={this.handleSubmit.bind(this)}>
+      <Form name="contact" validate={validate} initialValues={initialValues} onSubmit={this.handleSubmit}>
 
         <h1>Contact us</h1>
 
         <Field name="firstName">
-          <Control label="First name:" autoFocus/>
+          <Control label="First name:"/>
         </Field>
 
         <Field name="lastName">
