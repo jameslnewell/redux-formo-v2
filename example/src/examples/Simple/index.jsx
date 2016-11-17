@@ -15,13 +15,19 @@ class SimpleExample extends React.Component {
   }
 
   handleSubmit(values) {
-    console.log('Submitted:', values);
+    console.log('Submitting', values);
+    return new Promise((resolve, reject) => {
+      if (Math.random() > 0.5) {
+        reject(new Error('An error occurred whilst submitting the form!'));
+      } else {
+        resolve();
+      }
+    })
   }
 
   render() {
     return (
       <Form name="contact" validate={validate} initialValues={initialValues} onSubmit={this.handleSubmit}>
-
         <h1>Contact us</h1>
 
         <Field name="firstName">
@@ -41,7 +47,6 @@ class SimpleExample extends React.Component {
         </Field>
 
         <button type="submit">Send</button>
-
       </Form>
     );
   }

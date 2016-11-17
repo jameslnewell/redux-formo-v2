@@ -30,7 +30,7 @@ export const getValue = (formName, fieldName) => state => {
   const form = getForm(formName)(state);
 
   if (!form.valuesByField) {
-    return {};
+    return '';
   }
 
   if (typeof form.valuesByField[fieldName] === 'undefined') {

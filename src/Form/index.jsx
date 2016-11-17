@@ -53,7 +53,7 @@ export class Form extends React.Component {
     event.preventDefault();
     this.validate()
       .then(valid => {
-
+console.log('validated')
         if (valid) {
           this.props.onSubmit(this.props.values);
         }

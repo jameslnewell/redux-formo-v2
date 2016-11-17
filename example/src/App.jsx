@@ -20,7 +20,6 @@ class App extends React.Component {
 
   render() {
     const View = views[this.state.view];
-    console.log(View, this.state.view);
     return (
       <div>
         <select onChange={this.handleViewChange.bind(this)} autoFocus>
