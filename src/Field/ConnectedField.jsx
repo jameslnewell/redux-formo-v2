@@ -26,11 +26,12 @@ export class ConnectedField extends React.Component {
 
     //initialise the field
     if (this.props.initialValue) {
-      this.props.actions.init(this.props.initialValue);
+      this.props.actions.initialise(this.props.initialValue);
     }
 
   }
 
+  //
   componentWillReceiveProps(nextProps) {
     const difference = diff(this.props, nextProps);
     if (difference.unchanged.length !== 0) {
