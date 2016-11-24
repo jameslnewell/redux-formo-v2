@@ -3,6 +3,15 @@ import type {Dispatch} from 'redux';
 import * as constants from './constants';
 import * as selectors from './selectors';
 
+export const init = (form : string, field : string, value : string) : Action => ({
+  type: constants.FIELD_INIT,
+  meta: {
+    form,
+    field
+  },
+  payload: value
+});
+
 export const focus = (form : string, field : string) : Action => ({
   type: constants.FIELD_FOCUS,
   meta: {

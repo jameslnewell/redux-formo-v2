@@ -108,10 +108,19 @@ export const metaByField : Reducer<Object, Action> = (state = {}, action) => {
   }
 };
 
-export const valuesByField : Reducer<Object, Action> = (state, action) => {
+export const valuesByField : Reducer<Object, Action> = (state = {}, action) => {
   if (action.meta && action.meta.field) {
     const fieldName = action.meta.field;
     switch (action.type) {
+
+      case constants.FIELD_INIT:
+        if (!state[fieldName]) {
+          return {
+            ...state,
+            [action.meta.field]: action.payload
+          };
+        }
+        break;
 
       case constants.FIELD_CHANGE:
         if (state[fieldName] !== action.payload) {

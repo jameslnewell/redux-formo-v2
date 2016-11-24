@@ -35,6 +35,10 @@ export class Form extends React.Component {
     }
   }
 
+  componentWillUnmount() {
+    //TODO: destroy
+  }
+
   register(fieldName, validate) {
     this._validate[fieldName] = validate;
   }
@@ -54,9 +58,8 @@ export class Form extends React.Component {
 
   handleSubmit(event) {
     event.preventDefault();
-    console.log('default prevented');
 
-    //validate each field and submit the form
+    //validate each field and then submit the form if it is valid
     this.validate()
       .then(valid => {
         if (valid) {

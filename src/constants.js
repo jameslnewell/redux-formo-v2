@@ -3,6 +3,7 @@ const PREFIX = '@redux-formo/';
 const FIELD_PREFIX = `${PREFIX}field/`;
 const FORM_PREFIX = `${PREFIX}form/`;
 
+export const FIELD_INIT = `${FIELD_PREFIX}init`;
 export const FIELD_FOCUS = `${FIELD_PREFIX}focus`;
 export const FIELD_BLUR = `${FIELD_PREFIX}blur`;
 export const FIELD_CHANGE = `${FIELD_PREFIX}change`;

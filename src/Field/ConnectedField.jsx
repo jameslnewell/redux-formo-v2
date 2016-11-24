@@ -24,6 +24,11 @@ export class ConnectedField extends React.Component {
     this.handleBlur = this.handleBlur.bind(this);
     this.handleChange = this.handleChange.bind(this);
 
+    //initialise the field
+    if (this.props.initialValue) {
+      this.props.actions.init(this.props.initialValue);
+    }
+
   }
 
   componentWillReceiveProps(nextProps) {
