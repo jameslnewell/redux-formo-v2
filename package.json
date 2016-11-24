@@ -4,9 +4,11 @@
   "description": "A redux-formo-v2 component.",
   "main": "./dist/index.js",
   "repository": "jameslnewell/redux-formo-v2",
-  "dependencies": {},
+  "dependencies": {
+  },
   "peerDependencies": {
-    "react": "^0.14.0 || ^15.0.0"
+    "react": "^0.14.0 || ^15.0.0",
+    "redux": "^3.0.0"
   },
   "devDependencies": {
     "babel-cli": "^6.18.0",
@@ -19,6 +21,7 @@
     "del-cli": "^0.2.0",
     "eslint": "^3.10.1",
     "eslint-config-jameslnewell": "^2.0.0-preview.1",
+    "flow-bin": "^0.36.0",
     "husky": "^0.11.9",
     "mocha": "^3.1.2",
     "react": "^15.3.2",

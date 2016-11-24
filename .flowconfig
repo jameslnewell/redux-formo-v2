@@ -3,6 +3,8 @@
 <PROJECT_ROOT>/example/node_modules/**
 
 [include]
+<PROJECT_ROOT>/node_modules/redux/**
+
 
 [libs]
 flow-typed

@@ -1,7 +1,9 @@
+//@flow
+import type {Reducer} from 'redux';
 import {combineReducers} from 'redux';
 import * as constants from './constants';
 
-export const active = (state = false, action = {}) => {
+export const active : Reducer<boolean, Action> = (state = false, action) => {
   switch (action.type) {
 
     case constants.FIELD_FOCUS:
@@ -16,7 +18,7 @@ export const active = (state = false, action = {}) => {
   }
 };
 
-export const validating = (state = false, action = {}) => {
+export const validating : Reducer<boolean, Action> = (state = false, action) => {
   switch (action.type) {
 
     case constants.FIELD_VALIDATE:
@@ -32,7 +34,7 @@ export const validating = (state = false, action = {}) => {
   }
 };
 
-export const validated = (state = false, action = {}) => {
+export const validated : Reducer<boolean, Action> = (state = false, action) => {
   switch (action.type) {
 
     case constants.FIELD_VALIDATE_OK:
@@ -50,7 +52,7 @@ export const meta = combineReducers({
   validated
 });
 
-export const submitting = (state = false, action = {}) => {
+export const submitting : Reducer<boolean, Action> = (state = false, action) => {
   switch (action.type) {
 
     case constants.FORM_SUBMIT:
@@ -68,7 +70,7 @@ export const submitting = (state = false, action = {}) => {
   }
 };
 
-export const submitted = (state = false, action = {}) => {
+export const submitted : Reducer<boolean, Action> = (state = false, action) => {
   switch (action.type) {
 
     case constants.FORM_SUBMIT_OK:
@@ -80,7 +82,7 @@ export const submitted = (state = false, action = {}) => {
   }
 };
 
-export const error = (state = null, action = {}) => {
+export const error : Reducer<?string, Action> = (state = null, action) => {
   switch (action.type) {
 
     case constants.FORM_SUBMIT_OK:
@@ -95,7 +97,7 @@ export const error = (state = null, action = {}) => {
   }
 };
 
-export const metaByField = (state = {}, action = {}) => {
+export const metaByField : Reducer<Object, Action> = (state = {}, action) => {
   if (action.meta && action.meta.field) {
     return {
       ...state,
@@ -106,7 +108,7 @@ export const metaByField = (state = {}, action = {}) => {
   }
 };
 
-export const valuesByField = (state = {}, action = {}) => {
+export const valuesByField : Reducer<Object, Action> = (state, action) => {
   if (action.meta && action.meta.field) {
     const fieldName = action.meta.field;
     switch (action.type) {
@@ -125,7 +127,7 @@ export const valuesByField = (state = {}, action = {}) => {
   return state;
 };
 
-export const errorsByField = (state = {}, action = {}) => {
+export const errorsByField : Reducer<Object, Action> = (state = {}, action) => {
   if (action.meta && action.meta.field) {
     const fieldName = action.meta.field;
     switch (action.type) {
@@ -162,7 +164,7 @@ export const form = combineReducers({
   errorsByField
 });
 
-export default (state = {}, action = {}) => {
+const reducer : Reducer<Object, Action> = (state, action) => {
   if (action.meta && action.meta.form) {
     return {
       ...state,
@@ -172,3 +174,5 @@ export default (state = {}, action = {}) => {
     return state;
   }
 };
+
+export default reducer;

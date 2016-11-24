@@ -1,11 +1,9 @@
 //@flow
+import type {Dispatch} from 'redux';
 import * as constants from './constants';
 import * as selectors from './selectors';
 
-type Validate = (value : mixed) => void|Promise<void>|string|Promise<string>;
-type Submit = (values : Object) => void|Promise<void>;
-
-export const focus = (form : string, field : string) => ({
+export const focus = (form : string, field : string) : Action => ({
   type: constants.FIELD_FOCUS,
   meta: {
     form,
@@ -13,7 +11,7 @@ export const focus = (form : string, field : string) => ({
   }
 });
 
-export const blur = (form : string, field : string) => ({
+export const blur = (form : string, field : string) : Action => ({
   type: constants.FIELD_BLUR,
   meta: {
     form,
@@ -21,7 +19,7 @@ export const blur = (form : string, field : string) => ({
   }
 });
 
-export const change = (form : string, field : string, value : mixed) => ({
+export const change = (form : string, field : string, value : mixed) : Action => ({
   type: constants.FIELD_CHANGE,
   meta: {
     form,
@@ -30,7 +28,7 @@ export const change = (form : string, field : string, value : mixed) => ({
   payload: value
 });
 
-const startValidating = (form : string, field : string) => ({
+const startValidating = (form : string, field : string) : Action => ({
   type: constants.FIELD_VALIDATE,
   meta: {
     form,
@@ -38,7 +36,7 @@ const startValidating = (form : string, field : string) => ({
   }
 });
 
-const finishValidating = (form : string, field : string, result) => ({
+const finishValidating = (form : string, field : string, result) : Action => ({
   type: constants.FIELD_VALIDATE_OK,
   meta: {
     form,
@@ -47,7 +45,7 @@ const finishValidating = (form : string, field : string, result) => ({
   payload: result
 });
 
-const errorValidating = (form : string, field : string, error) => ({
+const errorValidating = (form : string, field : string, error) : Action => ({
   type: constants.FIELD_VALIDATE_ERR,
   meta: {
     form,
@@ -56,7 +54,7 @@ const errorValidating = (form : string, field : string, error) => ({
   payload: error && error.stack || String(error)
 });
 
-export const validate = (form : string, field : string, fn : Validate) => (dispatch : Dispatch, getState : GetState) => {
+export const validate = (form : string, field : string, fn : ValidateFunction) => (dispatch : Dispatch<Action>, getState : GetState) => {
 
   const state = getState();
   const value = selectors.getFieldValue(state, form, field);
@@ -108,21 +106,21 @@ export const validate = (form : string, field : string, fn : Validate) => (dispa
 
 };
 
-const startSubmitting = (form : string) => ({
+const startSubmitting = (form : string) : Action => ({
   type: constants.FORM_SUBMIT,
   meta: {
     form
   }
 });
 
-const finishSubmitting = (form : string) => ({
+const finishSubmitting = (form : string) : Action => ({
   type: constants.FORM_SUBMIT_OK,
   meta: {
     form
   }
 });
 
-const errorSubmitting = (form : string, error : any) => ({
+const errorSubmitting = (form : string, error : any) : Action => ({
   type: constants.FORM_SUBMIT_ERR,
   meta: {
     form
@@ -130,7 +128,7 @@ const errorSubmitting = (form : string, error : any) => ({
   payload: error && error.stack || String(error)
 });
 
-export const submit = (form : string, fn : Submit) => (dispatch : Dispatch, getState : GetState) => {
+export const submit = (form : string, fn : SubmitFunction) => (dispatch : Dispatch<Action>, getState : GetState) => {
 
   const state = getState();
   const values = selectors.getFieldValues(state, form);
