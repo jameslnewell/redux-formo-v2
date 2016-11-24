@@ -4,8 +4,6 @@ import * as selectors from './selectors';
 
 type Validate = (value : mixed) => void|Promise<void>|string|Promise<string>;
 type Submit = (values : Object) => void|Promise<void>;
-type Dispatch = (action : mixed) => mixed;
-type GetState = () => Object;
 
 export const focus = (form : string, field : string) => ({
   type: constants.FIELD_FOCUS,
