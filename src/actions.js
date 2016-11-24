@@ -1,38 +1,30 @@
+//@flow
+import * as constants from './constants';
+import * as selectors from './selectors';
 
-import {
-  FIELD_SET_ACTOVE,
-  FIELD_SET_DIRTY,
-  FIELD_SET_VALUE,
-  FIELD_START_VALIDATING,
-  FIELD_FINISH_VALIDATING,
-  FIELD_ERROR_VALIDATING
-} from './constants';
+type Validate = (value : mixed) => void|Promise<void>|string|Promise<string>;
+type Submit = (values : Object) => void|Promise<void>;
+type Dispatch = (action : mixed) => mixed;
+type GetState = () => Object;
 
-import {
-  getValue,
-  getValues
-} from './selectors';
-
-export const setActive = (form, field, active) => ({
-  type: FIELD_SET_ACTOVE,
+export const focus = (form : string, field : string) => ({
+  type: constants.FIELD_FOCUS,
   meta: {
     form,
     field
-  },
-  payload: active
+  }
 });
 
-export const setDirty = (form, field, dirty) => ({
-  type: FIELD_SET_DIRTY,
+export const blur = (form : string, field : string) => ({
+  type: constants.FIELD_BLUR,
   meta: {
     form,
     field
-  },
-  payload: dirty
+  }
 });
 
-export const setValue = (form, field, value) => ({
-  type: FIELD_SET_VALUE,
+export const change = (form : string, field : string, value : mixed) => ({
+  type: constants.FIELD_CHANGE,
   meta: {
     form,
     field
@@ -40,16 +32,16 @@ export const setValue = (form, field, value) => ({
   payload: value
 });
 
-const startValidating = (form, field) => ({
-  type: FIELD_START_VALIDATING,
+const startValidating = (form : string, field : string) => ({
+  type: constants.FIELD_VALIDATE,
   meta: {
     form,
     field
   }
 });
 
-const finishValidating = (form, field, result) => ({
-  type: FIELD_FINISH_VALIDATING,
+const finishValidating = (form : string, field : string, result) => ({
+  type: constants.FIELD_VALIDATE_OK,
   meta: {
     form,
     field
@@ -57,20 +49,20 @@ const finishValidating = (form, field, result) => ({
   payload: result
 });
 
-const errorValidating = (form, field, error) => ({
-  type: FIELD_ERROR_VALIDATING,
+const errorValidating = (form : string, field : string, error) => ({
+  type: constants.FIELD_VALIDATE_ERR,
   meta: {
     form,
     field
   },
-  payload: error
+  payload: error && error.stack || String(error)
 });
 
-export const validate = (form, field, fn) => (dispatch, getState) => {
+export const validate = (form : string, field : string, fn : Validate) => (dispatch : Dispatch, getState : GetState) => {
 
   const state = getState();
-  const value = getValue(form, field)(state);
-  const values = getValues(form)(state);
+  const value = selectors.getFieldValue(state, form, field);
+  const values = selectors.getFieldValues(state, form);
 
   //enter the validating state when promise doesn't resolve immediately
   const timeout = setTimeout(
@@ -83,7 +75,7 @@ export const validate = (form, field, fn) => (dispatch, getState) => {
   try {
     promise = fn(value, values);
   } catch (error) {
-    promise = error;
+    promise = Promise.reject(error);
   }
 
   //resolve the result of the user's validate function
@@ -94,19 +86,14 @@ export const validate = (form, field, fn) => (dispatch, getState) => {
         //don't bother entering the validating state when the promise resolves instantly
         clearTimeout(timeout);
 
-        if (result === true) {
-
-          //complete the validation
-          dispatch(finishValidating(form, field, result));
-
-        } else {
-
-          //complete the validation
+        //complete the validation
+        if (result) {
           dispatch(errorValidating(form, field, result));
-
+        } else {
+          dispatch(finishValidating(form, field, result));
         }
 
-        return result === true;
+        return !Boolean(result);
       },
       error => {
 
@@ -116,7 +103,74 @@ export const validate = (form, field, fn) => (dispatch, getState) => {
         //complete the validation
         dispatch(errorValidating(form, field, error));
 
-        throw error;
+        return false;
+      }
+    )
+  ;
+
+};
+
+const startSubmitting = (form : string) => ({
+  type: constants.FORM_SUBMIT,
+  meta: {
+    form
+  }
+});
+
+const finishSubmitting = (form : string) => ({
+  type: constants.FORM_SUBMIT_OK,
+  meta: {
+    form
+  }
+});
+
+const errorSubmitting = (form : string, error : any) => ({
+  type: constants.FORM_SUBMIT_ERR,
+  meta: {
+    form
+  },
+  payload: error && error.stack || String(error)
+});
+
+export const submit = (form : string, fn : Submit) => (dispatch : Dispatch, getState : GetState) => {
+
+  const state = getState();
+  const values = selectors.getFieldValues(state, form);
+
+  //enter the submitting state when promise doesn't resolve immediately
+  const timeout = setTimeout(
+    () => dispatch(startSubmitting(form)),
+    0
+  );
+
+  //call the user's submit function and handle any synchronous errors whilst validating
+  let promise = null;
+  try {
+    promise = fn(values);
+  } catch (error) {
+    promise = Promise.reject(error);
+  }
+
+  //resolve the result of the user's submit function
+  return Promise.resolve(promise)
+    .then(
+      () => {
+
+        //don't bother entering the submitting state when the promise resolves instantly
+        clearTimeout(timeout);
+
+        //complete the submisison
+        dispatch(finishSubmitting(form));
+
+      },
+      error => {
+
+        //don't bother entering the submitting state when the promise resolves instantly
+        clearTimeout(timeout);
+
+        console.log('submitting', error)
+        dispatch(errorSubmitting(form, error));
+
       }
     )
   ;

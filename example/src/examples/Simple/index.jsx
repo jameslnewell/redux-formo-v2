@@ -3,10 +3,6 @@ import {Form, Field} from '../../../..';
 import Control from '../../shared/Control';
 import validate from './validate';
 
-const initialValues = {
-  message: 'I love your product so much!'
-};
-
 class SimpleExample extends React.Component {
 
   constructor(...args) {
@@ -18,35 +14,42 @@ class SimpleExample extends React.Component {
     console.log('Submitting', values);
     return new Promise((resolve, reject) => {
       if (Math.random() > 0.5) {
-        reject(new Error('An error occurred whilst submitting the form!'));
+        setTimeout(() => reject(new Error('An error occurred whilst submitting the form!')), 1000);
       } else {
-        resolve();
+        setTimeout(resolve, 100);
       }
     })
   }
 
   render() {
     return (
-      <Form name="contact" validate={validate} initialValues={initialValues} onSubmit={this.handleSubmit}>
-        <h1>Contact us</h1>
+      <Form name="contact" onSubmit={this.handleSubmit}>
+        {({error, submitting, submitted, onSubmit}) => (
+          <form onSubmit={onSubmit}>
+            <h1>Contact us</h1>
 
-        <Field name="firstName">
-          <Control label="First name:"/>
-        </Field>
+            {error}
 
-        <Field name="lastName">
-          <Control label="Last name:"/>
-        </Field>
+            <Field name="firstName" validate={validate.firstName}>
+              <Control label="First name:"/>
+            </Field>
 
-        <Field name="email">
-          <Control label="Email:"/>
-        </Field>
+            <Field name="lastName" validate={validate.lastName}>
+              <Control label="Last name:"/>
+            </Field>
 
-        <Field name="message">
-          <Control label="Message:" component="textarea"/>
-        </Field>
+            <Field name="email" validate={validate.email}>
+              <Control label="Email:"/>
+            </Field>
 
-        <button type="submit">Send</button>
+            <Field name="message" validate={validate.message} initialValue="I love your product so much!">
+              <Control label="Message:" component="textarea"/>
+            </Field>
+
+            <button type="submit" disabled={submitting}>Send</button>
+
+          </form>
+        )}
       </Form>
     );
   }

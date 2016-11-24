@@ -1,5 +1,6 @@
+//@flow
 
-export const getForm = formName => state => {
+export const getForm = (state : Object, formName : string) => {
 
   if (!state.form) {
     return {};
@@ -12,8 +13,8 @@ export const getForm = formName => state => {
   return state.form[formName];
 };
 
-export const getMeta = (formName, fieldName) => state => {
-  const form = getForm(formName)(state);
+export const getFieldMeta = (state : Object, formName : string, fieldName : string) => {
+  const form = getForm(state, formName);
 
   if (!form.metaByField) {
     return {};
@@ -26,8 +27,18 @@ export const getMeta = (formName, fieldName) => state => {
   return form.metaByField[fieldName];
 };
 
-export const getValue = (formName, fieldName) => state => {
-  const form = getForm(formName)(state);
+export const getFieldValues = (state : Object, formName : string) => {
+  const form = getForm(state, formName);
+
+  if (!form.valuesByField) {
+    return {};
+  }
+
+  return form.valuesByField;
+};
+
+export const getFieldValue = (state : Object, formName : string, fieldName : string) => {
+  const form = getForm(state, formName);
 
   if (!form.valuesByField) {
     return '';
@@ -40,12 +51,26 @@ export const getValue = (formName, fieldName) => state => {
   return form.valuesByField[fieldName];
 };
 
-export const getValues = (formName) => state => {
-  const form = getForm(formName)(state);
+export const getFieldErrors = (state : Object, formName : string) => {
+  const form = getForm(state, formName);
 
-  if (!form.valuesByField) {
+  if (!form.errorsByField) {
     return {};
   }
 
-  return form.valuesByField;
+  return form.errorsByField;
 };
+export const getFieldError = (state : Object, formName : string, fieldName : string) => {
+  const form = getForm(state, formName);
+
+  if (!form.errorsByField) {
+    return null;
+  }
+
+  if (typeof form.errorsByField[fieldName] === 'undefined') {
+    return null;
+  }
+
+  return form.errorsByField[fieldName];
+};
+

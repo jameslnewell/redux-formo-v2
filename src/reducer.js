@@ -1,17 +1,92 @@
 import {combineReducers} from 'redux';
-import {
-  FIELD_SET_ACTOVE,
-  FIELD_SET_DIRTY,
-  FIELD_SET_VALUE,
-  FIELD_START_VALIDATING,
-  FIELD_FINISH_VALIDATING,
-  FIELD_ERROR_VALIDATING
-} from './constants';
+import * as constants from './constants';
 
-export const setStateToPayloadReducer = (actionType, initialState) => (state = initialState, action = {}) => {
+export const active = (state = false, action = {}) => {
   switch (action.type) {
 
-    case actionType:
+    case constants.FIELD_FOCUS:
+      return true;
+
+    case constants.FIELD_BLUR:
+      return false;
+
+    default:
+      return state;
+
+  }
+};
+
+export const validating = (state = false, action = {}) => {
+  switch (action.type) {
+
+    case constants.FIELD_VALIDATE:
+      return true;
+
+    case constants.FIELD_VALIDATE_OK:
+    case constants.FIELD_VALIDATE_ERR:
+      return false;
+
+    default:
+      return state;
+
+  }
+};
+
+export const validated = (state = false, action = {}) => {
+  switch (action.type) {
+
+    case constants.FIELD_VALIDATE_OK:
+      return true;
+
+    default:
+      return state;
+
+  }
+};
+
+export const meta = combineReducers({
+  active,
+  validating,
+  validated
+});
+
+export const submitting = (state = false, action = {}) => {
+  switch (action.type) {
+
+    case constants.FORM_SUBMIT:
+      return true;
+
+    case constants.FORM_SUBMIT_OK:
+      return false;
+
+    case constants.FORM_SUBMIT_ERR:
+      return false;
+
+    default:
+      return state;
+
+  }
+};
+
+export const submitted = (state = false, action = {}) => {
+  switch (action.type) {
+
+    case constants.FORM_SUBMIT_OK:
+      return true;
+
+    default:
+      return state;
+
+  }
+};
+
+export const error = (state = null, action = {}) => {
+  switch (action.type) {
+
+    case constants.FORM_SUBMIT_OK:
+      return null;
+
+    case constants.FORM_SUBMIT_ERR:
       return action.payload;
 
     default:
@@ -19,69 +94,6 @@ export const setStateToPayloadReducer = (actionType, initialState) => (state = i
 
   }
 };
-
-export const active = setStateToPayloadReducer(FIELD_SET_ACTOVE, false);
-export const dirty = setStateToPayloadReducer(FIELD_SET_DIRTY, false);
-
-export const error = (state = null, action = {}) => {
-  const {type, payload} = action;
-
-  switch (type) {
-
-    case FIELD_FINISH_VALIDATING:
-      return null;
-
-    case FIELD_ERROR_VALIDATING:
-      return String(payload);
-
-    default:
-      return state;
-
-  }
-
-};
-
-export const validating = (state = false, action = {}) => {
-  const {type} = action;
-
-  switch (type) {
-
-    case FIELD_START_VALIDATING:
-      return true;
-
-    case FIELD_FINISH_VALIDATING:
-    case FIELD_ERROR_VALIDATING:
-      return false;
-
-    default:
-      return state;
-
-  }
-
-};
-
-export const validated = (state = false, action = {}) => {
-  const {type} = action;
-
-  switch (type) {
-
-    case FIELD_FINISH_VALIDATING:
-      return true;
-
-    default:
-      return state;
-
-  }
-
-};
-
-export const meta = combineReducers({
-  active,
-  dirty,
-  error,
-  validating,
-  validated
-});
 
 export const metaByField = (state = {}, action = {}) => {
   if (action.meta && action.meta.field) {
@@ -96,26 +108,58 @@ export const metaByField = (state = {}, action = {}) => {
 
 export const valuesByField = (state = {}, action = {}) => {
   if (action.meta && action.meta.field) {
+    const fieldName = action.meta.field;
     switch (action.type) {
 
-      case FIELD_SET_VALUE:
-        return {
-          ...state,
-          [action.meta.field]: action.payload
-        };
-
-      default:
-        return state;
+      case constants.FIELD_CHANGE:
+        if (state[fieldName] !== action.payload) {
+          return {
+            ...state,
+            [action.meta.field]: action.payload
+          };
+        }
+        break;
 
     }
-  } else {
-    return state;
   }
+  return state;
+};
+
+export const errorsByField = (state = {}, action = {}) => {
+  if (action.meta && action.meta.field) {
+    const fieldName = action.meta.field;
+    switch (action.type) {
+
+      case constants.FIELD_VALIDATE_OK:
+        if (state[fieldName] !== null) {
+          return {
+            ...state,
+            [fieldName]: null
+          };
+        }
+        break;
+
+      case constants.FIELD_VALIDATE_ERR:
+        if (state[fieldName] !== action.payload) {
+          return {
+            ...state,
+            [action.meta.field]: action.payload
+          };
+        }
+        break;
+
+    }
+  }
+  return state;
 };
 
 export const form = combineReducers({
+  submitting,
+  submitted,
+  error,
   metaByField,
-  valuesByField
+  valuesByField,
+  errorsByField
 });
 
 export default (state = {}, action = {}) => {

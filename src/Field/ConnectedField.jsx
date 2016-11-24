@@ -13,6 +13,9 @@ import diff from 'shallow-diff';
 
 export class ConnectedField extends React.Component {
 
+  /**
+   * Construct the field
+   */
   constructor(props, context) {
     super(props, context);
 
@@ -23,49 +26,41 @@ export class ConnectedField extends React.Component {
 
   }
 
-  // componentWillReceiveProps(nextProps) {
-  //   console.log('ConnectedField shallow equal test', diff(this.props, nextProps));
-  // }
-  //
-  // shouldComponentUpdate(nextProps) {
-  //   console.log(Object.keys(nextProps).length, diff(this.props, nextProps).unchanged.length)
-  //   return Object.keys(nextProps).length !== diff(this.props, nextProps).unchanged.length;
-  // }
-
-  /**
-   * Validate the input
-   * @returns {Promise}
-   */
-  validate() {
-    return this.props.actions.validate(this.props.validate);
+  componentWillReceiveProps(nextProps) {
+    const difference = diff(this.props, nextProps);
+    if (difference.unchanged.length !== 0) {
+      delete difference.unchanged;
+      console.log(`Field "${this.props.fieldName}" changed?`, difference);
+    }
   }
 
   /**
-   * Handle input focus
+   * Handle field focus
    */
   handleFocus() {
-    this.props.actions.setActive(true);
+    this.props.actions.focus();
   }
 
   /**
-   * Handle input blur
+   * Handle field blur
    */
   handleBlur() {
-    this.props.actions.setActive(false);
+    this.props.actions.blur();
 
-    //validate the input
+    //validate the field
     if (this.props.validateOn === 'blur') {
-      this.validate();
+      this.props.actions.validate(this.props.validate);
+      //TODO: onValid()/onError()
     }
 
   }
 
   /**
-   * Handle input change
+   * Handle field change
    */
   handleChange(event) {
 
-    //get the input value
+    //get the field value
     let value;
     if (event.target) {
       value = event.target.value;
@@ -73,13 +68,13 @@ export class ConnectedField extends React.Component {
       value = event;
     }
 
-    //set the input value and mark the input as dirty
-    this.props.actions.setValue(value);
-    this.props.actions.setDirty(true);
+    //change the field value
+    this.props.actions.change(value);
 
-    //validate the input
+    //validate the field
     if (this.props.validateOn === 'change') {
-      this.validate();
+      this.props.actions.validate(this.props.validate);
+      //TODO: onValid()/onError()
     }
 
   }
@@ -91,6 +86,7 @@ export class ConnectedField extends React.Component {
       formName,
       fieldName,
       value,
+      initialValue,
       validate,
       validateOn,
 
@@ -116,7 +112,7 @@ export class ConnectedField extends React.Component {
       active: false,
       validating: false,
       validated: false,
-      valid: false,
+      valid: typeof otherProps.error === null,
 
       ...domProps,
       ...otherProps,

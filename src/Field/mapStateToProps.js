@@ -1,10 +1,21 @@
-import {getMeta, getValue} from '../selectors';
+//@flow
+import * as selectors from '../selectors';
 
-export default (state, props) => {
+type State = Object;
+type FieldProps = {
+  formName: string,
+  fieldName: string
+};
+
+export default (state : State, props : FieldProps) => {
   const formName = props.formName;
   const fieldName = props.fieldName;
+
+  const meta = selectors.getFieldMeta(state, formName, fieldName);
+  const value = selectors.getFieldValue(state, formName, fieldName);
+  const error = selectors.getFieldError(state, formName, fieldName);
+
   return {
-    ...getMeta(formName, fieldName)(state),
-    value: getValue(formName, fieldName)(state)
+    ...meta, value, error
   };
 }

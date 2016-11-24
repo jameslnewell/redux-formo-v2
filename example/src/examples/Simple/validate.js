@@ -12,7 +12,6 @@ export default {
       return 'Please enter a valid first name.';
     }
 
-    return true;
   },
 
   lastName: value => {
@@ -25,7 +24,6 @@ export default {
       return 'Please enter a valid last name.';
     }
 
-    return true;
   },
 
   email: value => {
@@ -38,16 +36,13 @@ export default {
       return 'Please enter a valid email address.';
     }
 
-    return true;
   },
 
   message: value => {
 
-    if (validate.empty(value)) {
-      return true;
+    if (!validate.empty(value)) {
+      throw 'Uh oh! An error occurred during validation.';
     }
-
-    throw 'Uh oh! An error occurred during validation.';
 
   }
 

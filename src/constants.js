@@ -1,7 +1,16 @@
+//@flow
 const PREFIX = '@redux-formo/';
-export const FIELD_SET_ACTOVE = `${PREFIX}field/set-active`;
-export const FIELD_SET_DIRTY = `${PREFIX}field/set-dirty`;
-export const FIELD_SET_VALUE = `${PREFIX}field/set-value`;
-export const FIELD_START_VALIDATING = `${PREFIX}field/validate/start`;
-export const FIELD_FINISH_VALIDATING = `${PREFIX}field/validate/finish`;
-export const FIELD_ERROR_VALIDATING = `${PREFIX}field/validate/error`;
+const FIELD_PREFIX = `${PREFIX}field/`;
+const FORM_PREFIX = `${PREFIX}form/`;
+
+export const FIELD_FOCUS = `${FIELD_PREFIX}focus`;
+export const FIELD_BLUR = `${FIELD_PREFIX}blur`;
+export const FIELD_CHANGE = `${FIELD_PREFIX}change`;
+
+export const FIELD_VALIDATE = `${FIELD_PREFIX}validate`;
+export const FIELD_VALIDATE_OK = `${FIELD_PREFIX}validate/ok`;
+export const FIELD_VALIDATE_ERR = `${FIELD_PREFIX}validate/error`;
+
+export const FORM_SUBMIT = `${FORM_PREFIX}submit`;
+export const FORM_SUBMIT_OK = `${FORM_PREFIX}submit/ok`;
+export const FORM_SUBMIT_ERR = `${FORM_PREFIX}submit/error`;

@@ -2,6 +2,7 @@ import React from 'react';
 import {connect} from 'react-redux';
 import mapStateToProps from './mapStateToProps';
 import mapDispatchToProps from './mapDispatchToProps';
+import diff from 'shallow-diff';
 
 export class Form extends React.Component {
 
@@ -10,40 +11,42 @@ export class Form extends React.Component {
 
     //bind handlers
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.register = this.register.bind(this);
+    this.unregister = this.unregister.bind(this);
 
+    this._validate = {};
   }
 
   getChildContext() {
     return {
       formo: {
         name: this.props.name,
-        validate: this.props.validate
+        register: this.register,
+        unregister: this.unregister
       }
     };
   }
 
-  componentWillMount() {
-    this.initialise();
-  }
-
   componentWillReceiveProps(nextProps) {
-    console.log('shallow equal test', this.props.values === nextProps.values);
+    const difference = diff(this.props, nextProps);
+    if (difference.unchanged.length !== 0) {
+      delete difference.unchanged;
+      console.log(`Form "${this.props.name}" changed?`, difference);
+    }
   }
 
-  initialise() {
-    return Promise.all(
-      Object.keys(this.props.validate)
-        .map(fieldName => this.props.actions.setValue(fieldName, this.props.initialValues[fieldName]))
-    )
-      .then(() => console.log('inited', this.props.validate, this.props.initialValues))
-      .catch(err => console.log(err))
-    ;
+  register(fieldName, validate) {
+    this._validate[fieldName] = validate;
+  }
+
+  unregister(fieldName) {
+    delete this._validate[fieldName];
   }
 
   validate() {
     return Promise.all(
-      Object.keys(this.props.validate)
-        .map(fieldName => this.props.actions.validate(fieldName, this.props.validate[fieldName]))
+      Object.keys(this._validate)
+        .map(fieldName => this.props.actions.validate(fieldName, this._validate[fieldName]))
     )
       .then(results => results.reduce((accum, valid) => accum && valid, true))
     ;
@@ -51,32 +54,35 @@ export class Form extends React.Component {
 
   handleSubmit(event) {
     event.preventDefault();
+    console.log('default prevented');
+
+    //validate each field and submit the form
     this.validate()
       .then(valid => {
-console.log('validated')
         if (valid) {
-          this.props.onSubmit(this.props.values);
+          this.props.actions.submit(this.props.onSubmit);
         }
-
       })
     ;
+
   }
 
+
   render() {
-    const {name, validate, children: Component, ...otherProps} = this.props;
+    const {name, validate, actions, children: Component, onSubmit, ...otherProps} = this.props;
 
     if (typeof Component === 'function') {
 
       //e.g. <Form component={MyForm}/> OR <Form>{() => <div/>}</Form>
       return (
-        <Component {...otherProps}/>
+        <Component {...otherProps} onSubmit={this.handleSubmit}/>
       );
 
     } else {
 
       //e.g. <Form><div>...</div></Form>
       return (
-        <form onSubmit={this.handleSubmit}>{Component}</form>
+        <form {...otherProps} onSubmit={this.handleSubmit}>{Component}</form>
       );
 
     }
@@ -91,15 +97,11 @@ Form.childContextTypes = {
 
 Form.propTypes = {
   name: React.PropTypes.string.isRequired,
-  validate: React.PropTypes.object,
-  initialValues: React.PropTypes.object,
   onSubmit: React.PropTypes.func,
   children: React.PropTypes.oneOfType([React.PropTypes.node, React.PropTypes.func])
 };
 
 Form.defaultProps = {
-  validate: {},
-  initialValues: {},
   onSubmit: () => {/* do nothing */},
   children: null
 };
