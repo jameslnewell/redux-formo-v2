@@ -1,10 +1,14 @@
 import React from 'react';
 import Simple from './examples/Simple';
-import Wizard from './examples/Wizard';
+import MultiPage from './examples/MultiPage';
+import ConditionalHiddenField from './examples/ConditionalHiddenField';
+import ValidateWithContext from './examples/ValidateWithContext';
 
 const views = {
   simple: Simple,
-  wizard: Wizard
+  'multi-page': MultiPage,
+  'conditional-hidden-field': ConditionalHiddenField,
+  'validate-with-context': ValidateWithContext
 };
 
 class App extends React.Component {

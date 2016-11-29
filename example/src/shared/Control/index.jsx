@@ -12,6 +12,7 @@ const Control = props => {
     validated,
     valid,
     error,
+    options,
     component: Component,
     ...otherProps
   } = props;
@@ -34,7 +35,18 @@ const Control = props => {
   return (
     <label className={classes}>
       <span className="control__label">{label}</span>
-      <Component {...otherProps} className={inputClasses}/>
+      {
+        Component !== 'select'
+        ? <Component {...otherProps} className={inputClasses}/>
+        : (
+          <select {...otherProps} className={inputClasses}>
+            <option/>
+            {Object.keys(options).map(option => (
+              <option value={option}>{options[option]}</option>
+            ))}
+          </select>
+        )
+      }
       {error ? <span className="control__error">{error}</span> : null}
     </label>
   );
@@ -42,7 +54,8 @@ const Control = props => {
 };
 
 Control.defaultProps = {
-  component: 'input'
+  component: 'input',
+  options: {}
 };
 
 export default Control;

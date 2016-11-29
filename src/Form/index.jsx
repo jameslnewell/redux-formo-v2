@@ -36,7 +36,9 @@ export class Form extends React.Component {
   }
 
   componentWillUnmount() {
-    //TODO: destroy
+    if (this.props.destroyOnUnmount) {
+      this.props.actions.destroy();
+    }
   }
 
   register(fieldName, validate) {
@@ -70,9 +72,8 @@ export class Form extends React.Component {
 
   }
 
-
   render() {
-    const {name, validate, actions, children: Component, onSubmit, ...otherProps} = this.props;
+    const {name, validate, actions, submitting, submitted, error, errors, destroyOnUnmount, children: Component, onSubmit, ...otherProps} = this.props;
 
     if (typeof Component === 'function') {
 
@@ -100,11 +101,13 @@ Form.childContextTypes = {
 
 Form.propTypes = {
   name: React.PropTypes.string.isRequired,
+  destroyOnUnmount: React.PropTypes.bool,
   onSubmit: React.PropTypes.func,
   children: React.PropTypes.oneOfType([React.PropTypes.node, React.PropTypes.func])
 };
 
 Form.defaultProps = {
+  destroyOnUnmount: true,
   onSubmit: () => {/* do nothing */},
   children: null
 };

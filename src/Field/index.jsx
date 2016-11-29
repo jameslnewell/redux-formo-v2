@@ -47,12 +47,7 @@ Field.contextTypes = {
 };
 
 Field.propTypes = {
-  name: React.PropTypes.string.isRequired,
-  validate: React.PropTypes.func
-};
-
-Field.defaultProps = {
-  validate: () => {/* do nothing */}
+  name: React.PropTypes.string.isRequired
 };
 
 export default Field;

@@ -45,6 +45,12 @@ export class ConnectedField extends React.Component {
    */
   handleFocus() {
     this.props.actions.focus();
+
+    //allow the user to handle the event
+    if (typeof this.props.onFocus === 'function') {
+      this.props.onFocus(event);
+    }
+
   }
 
   /**
@@ -53,8 +59,14 @@ export class ConnectedField extends React.Component {
   handleBlur() {
     this.props.actions.blur();
 
+    //allow the user to handle the event
+    if (typeof this.props.onBlur === 'function') {
+      this.props.onBlur(event);
+    }
+
     //validate the field
     if (this.props.validateOn === 'blur') {
+      console.log(this.props.validate);
       this.props.actions.validate(this.props.validate);
       //TODO: onValid()/onError()
     }
@@ -76,6 +88,11 @@ export class ConnectedField extends React.Component {
 
     //change the field value
     this.props.actions.change(value);
+
+    //allow the user to handle the event
+    if (typeof this.props.onChange === 'function') {
+      this.props.onChange(event);
+    }
 
     //validate the field
     if (this.props.validateOn === 'change') {
@@ -160,6 +177,10 @@ ConnectedField.propTypes = {
   validate: React.PropTypes.func,
   validateOn: React.PropTypes.oneOf(['change', 'blur']),
 
+  onFocus: React.PropTypes.func,
+  onBlur: React.PropTypes.func,
+  onChange: React.PropTypes.func,
+
   children: React.PropTypes.oneOfType([
     React.PropTypes.element,
     React.PropTypes.func
@@ -168,7 +189,7 @@ ConnectedField.propTypes = {
 };
 
 ConnectedField.defaultProps = {
-  validate: () => true,
+  validate: () => {/*do nothing*/},
   validateOn: 'blur',
   children: 'input'
 };

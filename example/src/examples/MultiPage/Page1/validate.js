@@ -8,11 +8,10 @@ export default {
       return 'Please enter a first name.';
     }
 
-    if (!validate.alphanum(value)) {
+    if (!validate.alphabetical(value)) {
       return 'Please enter a valid first name.';
     }
 
-    return true;
   },
 
   lastName: value => {
@@ -21,11 +20,10 @@ export default {
       return 'Please enter a last name.';
     }
 
-    if (!validate.alphanum(value)) {
+    if (!validate.alphabetical(value)) {
       return 'Please enter a valid last name.';
     }
 
-    return true;
   },
 
   email: value => {
@@ -38,13 +36,12 @@ export default {
       return 'Please enter a valid email address.';
     }
 
-    return true;
   },
 
   message: value => {
 
     if (validate.empty(value)) {
-      return true;
+      return;
     }
 
     throw 'Uh oh! An error occurred during validation.';

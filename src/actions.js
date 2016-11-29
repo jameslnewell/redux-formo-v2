@@ -115,6 +115,13 @@ export const validate = (form : string, field : string, fn : ValidateFunction) =
 
 };
 
+export const destroy = (form : string) => ({
+  type: constants.FORM_DESTROY,
+  meta: {
+    form
+  }
+});
+
 const startSubmitting = (form : string) : Action => ({
   type: constants.FORM_SUBMIT,
   meta: {

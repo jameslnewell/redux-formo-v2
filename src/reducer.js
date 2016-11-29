@@ -175,10 +175,23 @@ export const form = combineReducers({
 
 const reducer : Reducer<Object, Action> = (state, action) => {
   if (action.meta && action.meta.form) {
-    return {
-      ...state,
-      [action.meta.form]: form(state[action.meta.form], action)
-    };
+    switch (action.type) {
+
+      case constants.FORM_DESTROY:
+        const newState = {};
+        Object.keys(state).forEach(key => {
+          if (key !== action.meta.form) {
+            newState[key] = state[key];
+          }
+        });
+        return newState;
+
+      default:
+        return {
+          ...state,
+          [action.meta.form]: form(state[action.meta.form], action)
+        };
+    }
   } else {
     return state;
   }

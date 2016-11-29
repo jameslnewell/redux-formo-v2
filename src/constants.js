@@ -12,6 +12,8 @@ export const FIELD_VALIDATE = `${FIELD_PREFIX}validate`;
 export const FIELD_VALIDATE_OK = `${FIELD_PREFIX}validate/ok`;
 export const FIELD_VALIDATE_ERR = `${FIELD_PREFIX}validate/error`;
 
+export const FORM_DESTROY = `${FORM_PREFIX}destroy`;
+
 export const FORM_SUBMIT = `${FORM_PREFIX}submit`;
 export const FORM_SUBMIT_OK = `${FORM_PREFIX}submit/ok`;
 export const FORM_SUBMIT_ERR = `${FORM_PREFIX}submit/error`;
