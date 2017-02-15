@@ -16,19 +16,19 @@ export class ConnectedField extends React.Component {
   /**
    * Construct the field
    */
-  constructor(props, context) {
-    super(props, context);
+  constructor(props, ...args) {
+    super(props, ...args);
 
     //bind the handlers
     this.handleFocus = this.handleFocus.bind(this);
     this.handleBlur = this.handleBlur.bind(this);
     this.handleChange = this.handleChange.bind(this);
 
-    //initialise the field
-    if (this.props.initialValue) {
-      this.props.actions.initialise(this.props.initialValue);
-    }
+  }
 
+  componentDidMount() {
+    const {initField, formName, fieldName, defaultValue} = this.props;
+    initField(formName, fieldName, defaultValue);
   }
 
   //
@@ -44,9 +44,12 @@ export class ConnectedField extends React.Component {
    * Handle field focus
    */
   handleFocus() {
-    this.props.actions.focus();
+    const {focusField, formName, fieldName} = this.props;
 
-    //allow the user to handle the event
+    //focus the field
+    focusField(formName, fieldName);
+
+    //let the user to handle the event
     if (typeof this.props.onFocus === 'function') {
       this.props.onFocus(event);
     }
@@ -57,18 +60,19 @@ export class ConnectedField extends React.Component {
    * Handle field blur
    */
   handleBlur() {
-    this.props.actions.blur();
+    const {blurField, formName, fieldName} = this.props;
 
-    //allow the user to handle the event
-    if (typeof this.props.onBlur === 'function') {
-      this.props.onBlur(event);
-    }
+    //blur the field
+    blurField(formName, fieldName);
 
     //validate the field
     if (this.props.validateOn === 'blur') {
-      console.log(this.props.validate);
-      this.props.actions.validate(this.props.validate);
-      //TODO: onValid()/onError()
+      this.validate();
+    }
+
+    //let the user to handle the event
+    if (typeof this.props.onBlur === 'function') {
+      this.props.onBlur(event);
     }
 
   }
@@ -77,6 +81,7 @@ export class ConnectedField extends React.Component {
    * Handle field change
    */
   handleChange(event) {
+    const {changeField, formName, fieldName} = this.props;
 
     //get the field value
     let value;
@@ -86,20 +91,33 @@ export class ConnectedField extends React.Component {
       value = event;
     }
 
-    //change the field value
-    this.props.actions.change(value);
+    //change the field
+    changeField(formName, fieldName, value);
 
-    //allow the user to handle the event
+    //validate the field
+    if (this.props.validateOn === 'change') {
+      this.validate();
+    }
+
+    //let the user to handle the event
     if (typeof this.props.onChange === 'function') {
       this.props.onChange(event);
     }
 
-    //validate the field
-    if (this.props.validateOn === 'change') {
-      this.props.actions.validate(this.props.validate);
-      //TODO: onValid()/onError()
-    }
+  }
 
+  getName() {
+    return this.props.fieldName;
+  }
+
+  isValid() {
+    return this.props.valid;
+  }
+
+  validate() {
+    const {validateField, formName, fieldName, validate} = this.props;
+    return validateField(formName, fieldName, validate);
+    //TODO: onValid()/onError()
   }
 
   render() {
@@ -109,12 +127,19 @@ export class ConnectedField extends React.Component {
       formName,
       fieldName,
       value,
-      initialValue,
+      defaultValue,
       validate,
       validateOn,
+      onValid,
+      onError,
 
       //actions
-      actions,
+      initField,
+      resetField,
+      focusField,
+      blurField,
+      changeField,
+      validateField,
 
       //children
       children,
@@ -135,12 +160,9 @@ export class ConnectedField extends React.Component {
       active: false,
       validating: false,
       validated: false,
-      valid: typeof otherProps.error === null,
 
       ...domProps,
-      ...otherProps,
-
-      valid: this.props.error === null || typeof this.props.error === 'undefined'
+      ...otherProps
 
     };
 
@@ -189,9 +211,11 @@ ConnectedField.propTypes = {
 };
 
 ConnectedField.defaultProps = {
-  validate: () => {/*do nothing*/},
   validateOn: 'blur',
+  validate: () => {/*do nothing*/},
+  onValid: () => {/*do nothing*/},
+  onError: () => {/*do nothing*/},
   children: 'input'
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(ConnectedField);
+export default connect(mapStateToProps, mapDispatchToProps, null, {withRef: true})(ConnectedField);

@@ -4,7 +4,7 @@
 
 [include]
 <PROJECT_ROOT>/node_modules/redux/**
-
+<PROJECT_ROOT>/node_modules/react/**
 
 [libs]
 flow-typed

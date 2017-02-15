@@ -18,7 +18,7 @@ class SimpleExample extends React.Component {
       } else {
         setTimeout(resolve, 100);
       }
-    })
+    });
   }
 
   render() {
@@ -42,7 +42,7 @@ class SimpleExample extends React.Component {
               <Control label="Email:"/>
             </Field>
 
-            <Field name="message" validate={validate.message} initialValue="I love your product so much!">
+            <Field name="message" validate={validate.message} defaultValue="I love your product so much!">
               <Control label="Message:" component="textarea"/>
             </Field>
 

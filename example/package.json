@@ -3,13 +3,13 @@
   "private": true,
   "dependencies": {
     "classnames": "^2.2.5",
-    "react": "^15.3.1",
-    "react-dom": "^15.3.1",
+    "redux-formo": "file:..",
     "redux-thunk": "^2.1.0"
   },
   "devDependencies": {
     "babel-preset-es2015": "^6.13.2",
     "babel-preset-react": "^6.11.1",
+    "linklocal": "^2.8.0",
     "redux": "^3.6.0",
     "tradie": "^1.1.0",
     "tradie-plugin-copy": "^1.0.0",
@@ -17,6 +17,7 @@
     "tradie-plugin-serve": "^1.0.1"
   },
   "scripts": {
+    "postinstall": "linklocal",
     "clean": "tradie clean",
     "build": "tradie build",
     "watch": "tradie build --watch"

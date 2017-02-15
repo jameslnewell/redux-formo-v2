@@ -2,15 +2,40 @@
 
 export const getForm = (state : Object, formName : string) => {
 
-  if (!state.form) {
+  if (!state.forms) {
     return {};
   }
 
-  if (!state.form[formName]) {
+  if (!state.forms[formName]) {
     return {};
   }
 
-  return state.form[formName];
+  return state.forms[formName];
+};
+
+export const getFieldErrors = (state : Object, formName : string) => {
+  const form = getForm(state, formName);
+
+  if (!form.errorsByField) {
+    return {};
+  }
+
+  return form.errorsByField;
+};
+
+export const getFieldValues = (state : Object, formName : string) => {
+  const form = getForm(state, formName);
+
+  if (!form.valuesByField) {
+    return {};
+  }
+
+  return form.valuesByField;
+};
+
+export const isFormValid = (state : Object, formName : string) => {
+  const fieldErrors = getFieldErrors(state, formName);
+  return Object.keys(fieldErrors).every(field => fieldErrors[field] === null);
 };
 
 export const getFieldMeta = (state : Object, formName : string, fieldName : string) => {
@@ -27,16 +52,6 @@ export const getFieldMeta = (state : Object, formName : string, fieldName : stri
   return form.metaByField[fieldName];
 };
 
-export const getFieldValues = (state : Object, formName : string) => {
-  const form = getForm(state, formName);
-
-  if (!form.valuesByField) {
-    return {};
-  }
-
-  return form.valuesByField;
-};
-
 export const getFieldValue = (state : Object, formName : string, fieldName : string) => {
   const form = getForm(state, formName);
 
@@ -51,15 +66,6 @@ export const getFieldValue = (state : Object, formName : string, fieldName : str
   return form.valuesByField[fieldName];
 };
 
-export const getFieldErrors = (state : Object, formName : string) => {
-  const form = getForm(state, formName);
-
-  if (!form.errorsByField) {
-    return {};
-  }
-
-  return form.errorsByField;
-};
 export const getFieldError = (state : Object, formName : string, fieldName : string) => {
   const form = getForm(state, formName);
 
@@ -74,3 +80,7 @@ export const getFieldError = (state : Object, formName : string, fieldName : str
   return form.errorsByField[fieldName];
 };
 
+export const isFieldValid = (state : Object, formName : string, fieldName : string) => {
+  const error = getFieldError(state, formName, fieldName);
+  return typeof error === 'undefined' || error === null;
+};

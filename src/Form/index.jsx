@@ -4,9 +4,18 @@ import mapStateToProps from './mapStateToProps';
 import mapDispatchToProps from './mapDispatchToProps';
 import diff from 'shallow-diff';
 
+type Props = {
+  name: string,
+  destroyOnUnmount: ?boolean,
+  onSubmit: ?(values: {[field]: any}) => Promise,
+  children: any
+};
+
 export class Form extends React.Component {
 
-  constructor(props, context) {
+  fields = [];
+
+  constructor(props: Props, context) {
     super(props, context);
 
     //bind handlers
@@ -14,12 +23,11 @@ export class Form extends React.Component {
     this.register = this.register.bind(this);
     this.unregister = this.unregister.bind(this);
 
-    this._validate = {};
   }
 
   getChildContext() {
     return {
-      formo: {
+      reduxFormoForm: {
         name: this.props.name,
         register: this.register,
         unregister: this.unregister
@@ -27,7 +35,7 @@ export class Form extends React.Component {
     };
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps(nextProps: Props) {
     const difference = diff(this.props, nextProps);
     if (difference.unchanged.length !== 0) {
       delete difference.unchanged;
@@ -36,36 +44,47 @@ export class Form extends React.Component {
   }
 
   componentWillUnmount() {
-    if (this.props.destroyOnUnmount) {
-      this.props.actions.destroy();
+    const {destroyForm, name, destroyOnUnmount} = this.props;
+
+    if (destroyOnUnmount) {
+      destroyForm(name);
     }
+
   }
 
-  register(fieldName, validate) {
-    this._validate[fieldName] = validate;
+  register(field) {
+    this.fields.push(field);
   }
 
-  unregister(fieldName) {
-    delete this._validate[fieldName];
+  unregister(field) {
+    const index = this.fields.indexOf(field);
+
+    if (index !== -1) {
+      this.fields.splice(index, 1);
+    }
+
+  }
+
+  getName() {
+    return this.props.name;
+  }
+
+  isValid() {
+    return this.props.valid;
   }
 
   validate() {
-    return Promise.all(
-      Object.keys(this._validate)
-        .map(fieldName => this.props.actions.validate(fieldName, this._validate[fieldName]))
-    )
-      .then(results => results.reduce((accum, valid) => accum && valid, true))
-    ;
+    return Promise.all(this.fields.map(field => field.validate()));
   }
 
   handleSubmit(event) {
     event.preventDefault();
 
-    //validate each field and then submit the form if it is valid
+    const {submitForm, name, onSubmit} = this.props;
     this.validate()
-      .then(valid => {
-        if (valid) {
-          this.props.actions.submit(this.props.onSubmit);
+      .then(() => {
+        if (this.isValid()) {
+          submitForm(name, onSubmit);
         }
       })
     ;
@@ -73,7 +92,24 @@ export class Form extends React.Component {
   }
 
   render() {
-    const {name, validate, actions, submitting, submitted, error, errors, destroyOnUnmount, children: Component, onSubmit, ...otherProps} = this.props;
+    const {
+
+      name,
+      destroyOnUnmount,
+      onSubmit,
+
+      error,
+      submitting,
+      submitted,
+      valid,
+
+      //actions
+      destroyForm,
+      submitForm,
+
+      children: Component,
+      ...otherProps
+    } = this.props;
 
     if (typeof Component === 'function') {
 
@@ -96,7 +132,7 @@ export class Form extends React.Component {
 }
 
 Form.childContextTypes = {
-  formo: React.PropTypes.object
+  reduxFormoForm: React.PropTypes.object
 };
 
 Form.propTypes = {

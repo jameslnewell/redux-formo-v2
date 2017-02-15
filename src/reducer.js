@@ -173,7 +173,7 @@ export const form = combineReducers({
   errorsByField
 });
 
-const reducer : Reducer<Object, Action> = (state, action) => {
+const reducer : Reducer<Object, Action> = (state = {}, action) => {
   if (action.meta && action.meta.form) {
     switch (action.type) {
 

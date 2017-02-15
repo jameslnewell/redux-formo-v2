@@ -10,38 +10,78 @@ npm install --save redux-formo
 
 ## Usage
 
+`App.js`
 ```js
 import {Form, Field} from 'redux-formo';
 
-const validate = (field, value, values) => {
+export default () => (
+  <Form name="contact">
+  
+    <label>
+      First name: <br/>
+      <Field name="first_name" component="input"/>
+    </label>
+  
+    <label>
+      Last name: <br/>
+      <Field name="last_name" component="input"/>
+    </label>
+  
+    <label>
+      Email: <br/>
+      <Field name="email" component="input"/>
+    </label>
+  
+    <label>
+      Message: <br/>
+      <Field name="message" component="textarea"/>
+    </label>
+  
+    <button type="submit">Send</button>
+  
+  </Form>  
+);
 
-};
+```
 
-<Form name="contact">
+`store.js`
+```js
+import React from 'react';
+import {createStore, combineReducers, applyMiddleware} from 'redux';
+import thunk from 'redux-thunk';
+import {reducer} from 'redux-formo';
 
-  <label>
-    First name: <br/>
-    <Field name="first_name" component="input"/>
-  </label>
+/*
+   Create a `redux` store:
+    - use the `redux-formo` reducer
+    - use the `redux-thunk` middleware
+ */
+export default createStore(
+  combineReducers({forms: reducer}),
+  applyMiddleware(thunk)
+);
 
-  <label>
-    Last name: <br/>
-    <Field name="last_name" component="input"/>
-  </label>
+```
 
-  <label>
-    Email: <br/>
-    <Field name="email" component="input"/>
-  </label>
+`index.js`
+```js
+import React from 'react';
+import ReactDOM from 'react-dom';
+import {Provider} from 'react-redux';
+import App from './App';
+import store from './store';
 
-  <label>
-    Message: <br/>
-    <Field name="message" component="textarea"/>
-  </label>
+/*
+   Render your app:
+    - use the `react-redux` provider
+ */
+ReactDOM.render(
+  <Provider store={store}>
+    <App/>
+  </Provider>,
+  document.getElementById('app')
+);
 
-  <button type="submit">Send</button>
-
-</Form>
 ```
 
 ## API
@@ -67,6 +107,18 @@ The form children.
 The field name.
 
 > Required. A `string`.
+
+#### validate
+
+The validation method.
+
+> Optional. A `function`.
+
+#### defaultValue
+
+The initial value.
+
+> Optional. A `*`.
 
 #### children
 
@@ -96,6 +148,5 @@ For example:
 
 ## Change log
 
-### 0.1.0
+### 4.0.0
 
-{Enter change information here}

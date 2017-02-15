@@ -1,5 +1,13 @@
+//@flow
 import React from 'react';
 import ConnectedField from './ConnectedField';
+
+type Props = {
+  name: string,
+  validate: (value: any, values: {[field: string]: any}) => ?string,
+  defaultValue: any,
+  ref: (instance: any) => void
+};
 
 /*
   This component solely exists to get the form context and pass it down to a connected component (because mapStateToProps()
@@ -8,28 +16,43 @@ import ConnectedField from './ConnectedField';
 
 class Field extends React.Component {
 
-  constructor(...args) {
-    super(...args);
+  props: Props;
+
+  connectedField: any;
+
+  constructor(props: Props, ...args: any) {
+    super(props, ...args);
+
+    //bind the handlers
+    this.handleRef = this.handleRef.bind(this);
+
   }
 
-  componentDidMount() {
-    this.context.formo.register(this.props.name, this.props.validate);
-  }
+  handleRef = (ref: any) => {
+    const connectedField = ref === null ? ref : ref.getWrappedInstance();
 
-  componentWillUpdate(nextProps) {
-    this.context.formo.register(this.props.name, nextProps.validate);
-  }
+    //register/unregister the field
+    this.connectedField = connectedField;
+    if (connectedField) {
+      this.context.reduxFormoForm.register(this.connectedField);
+    } else {
+      this.context.reduxFormoForm.unregister(this.connectedField);
+    }
 
-  componentWillUnmount() {
-    this.context.formo.unregister(this.props.name);
-  }
+    //since we're overriding ref, if the parent component has passed us a ref, we'll pass their ref the instance too
+    if (typeof this.props.ref === 'function') {
+      this.props.ref(connectedField);
+    }
+
+  };
 
   render() {
-    const {name: formName} = this.context.formo;
+    const {name: formName} = this.context.reduxFormoForm;
     const {name: fieldName, ...otherProps} = this.props;
     return (
       <ConnectedField
         {...otherProps}
+        ref={this.handleRef}
         formName={formName}
         fieldName={fieldName}
       />
@@ -39,15 +62,11 @@ class Field extends React.Component {
 }
 
 Field.contextTypes = {
-  formo: React.PropTypes.shape({
+  reduxFormoForm: React.PropTypes.shape({
     name: React.PropTypes.string.isRequired,
     register: React.PropTypes.func.isRequired,
     unregister: React.PropTypes.func.isRequired
   }).isRequired
-};
-
-Field.propTypes = {
-  name: React.PropTypes.string.isRequired
 };
 
 export default Field;
