@@ -42,11 +42,13 @@ class SimpleExample extends React.Component {
               <Control label="Email:"/>
             </Field>
 
-            <Field name="message" validate={validate.message} defaultValue="I love your product so much!">
+            <Field ref={ref => this.message = ref} name="message" validate={validate.message} initialValue="I love your product so much!">
               <Control label="Message:" component="textarea"/>
             </Field>
 
             <button type="submit" disabled={submitting}>Send</button>
+            <button type="button" onClick={() => this.message.connectedField.reset('Hello!')}>Reset</button>
+
 
           </form>
         )}

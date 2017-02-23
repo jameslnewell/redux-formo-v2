@@ -114,7 +114,7 @@ The validation method.
 
 > Optional. A `function`.
 
-#### defaultValue
+#### initialValue
 
 The initial value.
 

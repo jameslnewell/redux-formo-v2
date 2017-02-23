@@ -27,8 +27,8 @@ export class ConnectedField extends React.Component {
   }
 
   componentDidMount() {
-    const {initField, formName, fieldName, defaultValue} = this.props;
-    initField(formName, fieldName, defaultValue);
+    const {initField, formName, fieldName, initialValue} = this.props;
+    initField(formName, fieldName, initialValue);
   }
 
   //
@@ -114,6 +114,11 @@ export class ConnectedField extends React.Component {
     return this.props.valid;
   }
 
+  reset(value) {
+    const {resetField, formName, fieldName} = this.props;
+    resetField(formName, fieldName, value);
+  }
+
   validate() {
     const {validateField, formName, fieldName, validate} = this.props;
     return validateField(formName, fieldName, validate);
@@ -127,7 +132,7 @@ export class ConnectedField extends React.Component {
       formName,
       fieldName,
       value,
-      defaultValue,
+      initialValue,
       validate,
       validateOn,
       onValid,
@@ -149,7 +154,7 @@ export class ConnectedField extends React.Component {
 
     const domProps = {
       name: `${formName}.${fieldName}`,
-      value: value === null || typeof value === 'undefined' ? '' : value,
+      value: value || '',
       onFocus: this.handleFocus,
       onBlur: this.handleBlur,
       onChange: this.handleChange
@@ -157,6 +162,7 @@ export class ConnectedField extends React.Component {
 
     const componentProps = {
 
+      initialised: false,
       active: false,
       validating: false,
       validated: false,

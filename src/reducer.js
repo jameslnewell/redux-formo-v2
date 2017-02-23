@@ -3,8 +3,26 @@ import type {Reducer} from 'redux';
 import {combineReducers} from 'redux';
 import * as constants from './constants';
 
+export const initialised : Reducer<boolean, Action> = (state = false, action) => {
+  switch (action.type) {
+
+    case constants.FIELD_INIT:
+      return true;
+
+    case constants.FIELD_RESET:
+      return false;
+
+    default:
+      return state;
+
+  }
+};
+
 export const active : Reducer<boolean, Action> = (state = false, action) => {
   switch (action.type) {
+
+    case constants.FIELD_RESET:
+      return false;
 
     case constants.FIELD_FOCUS:
       return true;
@@ -20,6 +38,9 @@ export const active : Reducer<boolean, Action> = (state = false, action) => {
 
 export const validating : Reducer<boolean, Action> = (state = false, action) => {
   switch (action.type) {
+
+    case constants.FIELD_RESET:
+      return false;
 
     case constants.FIELD_VALIDATE:
       return true;
@@ -37,8 +58,27 @@ export const validating : Reducer<boolean, Action> = (state = false, action) => 
 export const validated : Reducer<boolean, Action> = (state = false, action) => {
   switch (action.type) {
 
+    case constants.FIELD_RESET:
+      return false;
+
     case constants.FIELD_VALIDATE_OK:
       return true;
+
+    default:
+      return state;
+
+  }
+};
+
+export const initialValue : Reducer<boolean, Action> = (state = null, action) => {
+  switch (action.type) {
+
+    case constants.FIELD_INIT:
+      if (typeof action.payload !== 'undefined') {
+        return action.payload;
+      } else {
+        return state;
+      }
 
     default:
       return state;
@@ -49,7 +89,9 @@ export const validated : Reducer<boolean, Action> = (state = false, action) => {
 export const meta = combineReducers({
   active,
   validating,
-  validated
+  validated,
+  initialised,
+  initialValue
 });
 
 export const submitting : Reducer<boolean, Action> = (state = false, action) => {
@@ -114,14 +156,6 @@ export const valuesByField : Reducer<Object, Action> = (state = {}, action) => {
     switch (action.type) {
 
       case constants.FIELD_INIT:
-        if (!state[fieldName]) {
-          return {
-            ...state,
-            [action.meta.field]: action.payload
-          };
-        }
-        break;
-
       case constants.FIELD_CHANGE:
         if (state[fieldName] !== action.payload) {
           return {

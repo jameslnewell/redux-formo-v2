@@ -5,7 +5,7 @@ import ConnectedField from './ConnectedField';
 type Props = {
   name: string,
   validate: (value: any, values: {[field: string]: any}) => ?string,
-  defaultValue: any,
+  initialValue: any,
   ref: (instance: any) => void
 };
 
@@ -30,20 +30,12 @@ class Field extends React.Component {
 
   handleRef = (ref: any) => {
     const connectedField = ref === null ? ref : ref.getWrappedInstance();
-
-    //register/unregister the field
-    this.connectedField = connectedField;
     if (connectedField) {
       this.context.reduxFormoForm.register(this.connectedField);
     } else {
       this.context.reduxFormoForm.unregister(this.connectedField);
     }
-
-    //since we're overriding ref, if the parent component has passed us a ref, we'll pass their ref the instance too
-    if (typeof this.props.ref === 'function') {
-      this.props.ref(connectedField);
-    }
-
+    this.connectedField = connectedField;
   };
 
   render() {
