@@ -46,7 +46,6 @@ export default () => (
 
 `store.js`
 ```js
-import React from 'react';
 import {createStore, combineReducers, applyMiddleware} from 'redux';
 import thunk from 'redux-thunk';
 import {reducer} from 'redux-formo';
