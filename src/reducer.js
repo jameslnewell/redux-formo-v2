@@ -3,6 +3,16 @@ import type {Reducer} from 'redux';
 import {combineReducers} from 'redux';
 import * as constants from './constants';
 
+const omit = (object, key) => {
+  const newState = {};
+  Object.keys(object).forEach(k => {
+    if (k !== key) {
+      newState[k] = object[k];
+    }
+  });
+  return newState;
+};
+
 export const initialised : Reducer<boolean, Action> = (state = false, action) => {
   switch (action.type) {
 
@@ -141,10 +151,16 @@ export const error : Reducer<?string, Action> = (state = null, action) => {
 
 export const metaByField : Reducer<Object, Action> = (state = {}, action) => {
   if (action.meta && action.meta.field) {
-    return {
-      ...state,
-      [action.meta.field]: meta(state[action.meta.field], action)
-    };
+    const fieldName = action.meta.field;
+    switch (action.type) {
+
+      default:
+        return {
+          ...state,
+          [fieldName]: meta(state[fieldName], action)
+        };
+
+    }
   } else {
     return state;
   }
@@ -209,21 +225,16 @@ export const form = combineReducers({
 
 const reducer : Reducer<Object, Action> = (state = {}, action) => {
   if (action.meta && action.meta.form) {
+    const formName = action.meta.form;
     switch (action.type) {
 
       case constants.FORM_DESTROY:
-        const newState = {};
-        Object.keys(state).forEach(key => {
-          if (key !== action.meta.form) {
-            newState[key] = state[key];
-          }
-        });
-        return newState;
+        return omit(state, formName);
 
       default:
         return {
           ...state,
-          [action.meta.form]: form(state[action.meta.form], action)
+          [formName]: form(state[formName], action)
         };
     }
   } else {

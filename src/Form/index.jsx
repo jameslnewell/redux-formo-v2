@@ -7,7 +7,7 @@ import diff from 'shallow-diff';
 type Props = {
   name: string,
   destroyOnUnmount: ?boolean,
-  onSubmit: ?(values: {[field]: any}) => Promise,
+  onSubmit: ?(values: {[field: string]: any}) => Promise,
   children: any
 };
 

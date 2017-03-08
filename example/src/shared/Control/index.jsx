@@ -6,8 +6,8 @@ const Control = props => {
 
   const {
     label,
+    initialised,
     active,
-    dirty,
     validating,
     validated,
     valid,
@@ -27,8 +27,7 @@ const Control = props => {
   const inputClasses = classNames(
     'control__input',
     {
-      'control__input--active': active,
-      'control__input--dirty': dirty
+      'control__input--active': active
     }
   );
 

@@ -35,7 +35,7 @@ const errorSubmittingForm = (form : string, error : any) : Action => ({
 export const submitForm = (form : string, fn : SubmitFunction) => (dispatch : Dispatch<Action>, getState : GetState) => {
 
   const state = getState();
-  const values = selectors.getFieldValues(state, form);
+  const values = selectors.getFieldValues(state, form); //FIXME: should only get values for registered fields
 
   //enter the submitting state when promise doesn't resolve immediately
   const timeout = setTimeout(
